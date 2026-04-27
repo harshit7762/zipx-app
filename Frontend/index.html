@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>zipX.App</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;
+  --surface:#f4fdfc;
+  --surface2:#e8f9f7;
+  --surface3:#d0f2ef;
+  --accent:#3dcfc2;
+  --accent2:#2ab8aa;
+  --accent3:#ff6b6b;
+  --accent4:#f5a623;
+  --accent5:#7b6cf6;
+  --text:#2d3748;
+  --text2:#718096;
+  --border:rgba(61,207,194,0.22);
+  --glow:rgba(61,207,194,0.14);
+  --ravi:#3dcfc2;--sonu:#2ab8aa;--pankaj:#f5a623;--radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(61,207,194,0.07) 0%,transparent 60%),
+               radial-gradient(ellipse 60% 40% at 80% 80%,rgba(42,184,170,0.06) 0%,transparent 60%);}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:0;position:fixed;height:100vh;z-index:100;transition:transform 0.3s;}
+.logo{padding:24px 22px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.logo-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 20px rgba(61,207,194,0.35);}
+.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;}
+.logo-sub{font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;letter-spacing:1px;}
+.nav{padding:12px 12px;flex:1;overflow-y:auto;}
+.nav-section{margin-bottom:20px;}
+.nav-label{font-size:10px;color:var(--text2);letter-spacing:2px;font-family:'DM Mono',monospace;padding:0 10px;margin-bottom:6px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;cursor:pointer;color:var(--text2);
+  font-size:13px;font-weight:500;transition:all 0.2s;margin-bottom:2px;position:relative;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(0,153,204,0.1);color:var(--accent);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;background:var(--accent);border-radius:0 3px 3px 0;}
+.nav-badge{margin-left:auto;background:var(--accent3);color:#fff;font-size:10px;padding:2px 7px;border-radius:99px;font-weight:700;}
+.nav-badge.green{background:rgba(61,207,194,0.18);color:var(--accent);}
+.nav-icon{font-size:15px;width:20px;text-align:center;}
+.sidebar-footer{padding:14px;border-top:1px solid var(--border);}
+.agent-pills{display:flex;flex-direction:column;gap:5px;}
+.agent-pill{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;background:var(--surface2);font-size:12px;cursor:pointer;transition:all 0.2s;}
+.agent-pill:hover{background:var(--surface3);}
+.agent-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.agent-name{font-weight:600;flex:1;}
+.agent-bal{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);}
+
+/* ── MAIN ── */
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column;}
+
+/* ── TOPBAR ── */
+.topbar{height:62px;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:50;}
+.page-title{font-family:'Syne',sans-serif;font-weight:700;font-size:19px;flex:1;}
+.topbar-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);}
+.btn{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#ffffff;}
+.btn-primary:hover{opacity:0.9;transform:translateY(-1px);box-shadow:0 4px 20px rgba(61,207,194,0.4);}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--surface3);}
+.btn-danger{background:rgba(255,107,107,0.15);color:var(--accent3);border:1px solid rgba(255,107,107,0.3);}
+.btn-purple{background:rgba(181,123,238,0.15);color:var(--accent5);border:1px solid rgba(181,123,238,0.3);}
+.btn-purple:hover{background:rgba(181,123,238,0.25);}
+.user-badge{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.user-badge:hover{background:var(--surface3);}
+.user-role-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* ── CONTENT ── */
+.content{padding:22px 26px;flex:1;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stats-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:transform 0.2s;}
+.stat-card:hover{transform:translateY(-2px);}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.stat-card.c1::after{background:linear-gradient(90deg,var(--accent),transparent);}
+.stat-card.c2::after{background:linear-gradient(90deg,var(--accent2),transparent);}
+.stat-card.c3::after{background:linear-gradient(90deg,var(--accent3),transparent);}
+.stat-card.c4::after{background:linear-gradient(90deg,var(--accent4),transparent);}
+.stat-card.c5::after{background:linear-gradient(90deg,var(--accent5),transparent);}
+.stat-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;font-family:'DM Mono',monospace;margin-bottom:8px;}
+.stat-value{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;}
+.stat-sub{font-size:11px;color:var(--text2);margin-top:4px;}
+.stat-icon{position:absolute;right:14px;top:14px;font-size:22px;opacity:0.25;}
+
+/* ── GRID ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:18px;}
+
+/* ── PANELS ── */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.panel-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;}
+.panel-body{padding:18px;}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{padding:9px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--text2);border-bottom:1px solid var(--border);font-weight:500;}
+td{padding:10px 12px;border-bottom:1px solid rgba(61,207,194,0.08);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(61,207,194,0.04);}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace;}
+.tag-cash{background:rgba(61,207,194,0.12);color:var(--accent);}
+.tag-online{background:rgba(42,184,170,0.12);color:var(--accent2);}
+.tag-credit{background:rgba(181,123,238,0.15);color:var(--accent5);}
+.tag-pending{background:rgba(255,209,102,0.12);color:var(--accent4);}
+.tag-done{background:rgba(61,207,194,0.12);color:var(--accent);}
+.tag-overdue{background:rgba(255,107,107,0.12);color:var(--accent3);}
+
+/* ── AGENT BADGE ── */
+.agent-badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;font-family:'DM Mono',monospace;}
+.ab-ravi{background:rgba(61,207,194,0.15);color:var(--ravi);}
+.ab-sonu{background:rgba(42,184,170,0.15);color:var(--sonu);}
+.ab-pankaj{background:rgba(245,166,35,0.15);color:var(--pankaj);}
+.ab-sir{background:rgba(123,108,246,0.15);color:#7b6cf6;}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-full{grid-column:1/-1;}
+.form-group label{display:block;font-size:10px;color:var(--text2);margin-bottom:5px;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+.form-control{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;}
+.form-control:focus{border-color:var(--accent);}
+.form-control option{background:var(--surface2);}
+textarea.form-control{min-height:70px;resize:vertical;}
+
+@media print {
+  body * { visibility: hidden !important; }
+  #printBillArea, #printBillArea * { visibility: visible !important; }
+  #printBillArea {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 10mm !important;
+    background: #fff !important;
+    z-index: 99999 !important;
+    display: block !important;
+    page-break-after: avoid !important;
+  }
+  #printBillArea img, #printBillArea canvas { visibility: visible !important; display: block !important; }
+  html, body { height: auto !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important; }
+  @page { margin: 0; size: A4; }
+}
+
+/* ── AGENT CARD ── */
+.agent-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;}
+.agent-card-name{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.agent-stat-row{display:flex;gap:10px;flex-wrap:wrap;}
+.agent-stat{background:var(--surface2);border-radius:8px;padding:9px 12px;flex:1;min-width:70px;}
+.agent-stat-val{font-family:'DM Mono',monospace;font-weight:600;font-size:16px;}
+.agent-stat-l{font-size:10px;color:var(--text2);margin-top:2px;}
+
+/* ── DONUT ── */
+.donut-wrap{display:flex;align-items:center;gap:20px;}
+svg.donut{transform:rotate(-90deg);}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:8px;}
+.donut-color{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+
+/* ── CHART ── */
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:110px;padding:8px 0;}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.chart-bar{width:100%;border-radius:6px 6px 0 0;transition:all 0.6s cubic-bezier(.34,1.56,.64,1);position:relative;cursor:pointer;min-height:4px;}
+.chart-bar:hover{filter:brightness(1.2);}
+.chart-bar-label{font-size:9px;color:var(--text2);font-family:'DM Mono',monospace;}
+.chart-legend{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);}
+.legend-dot{width:8px;height:8px;border-radius:3px;}
+
+/* ── SUMMARY ROW ── */
+.summary-row{background:var(--surface2);border-radius:10px;padding:12px 16px;display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;border:1px solid var(--border);}
+.summary-item{text-align:center;}
+.summary-val{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;}
+.summary-lbl{font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:2px;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:26px;width:560px;max-height:88vh;overflow-y:auto;position:relative;}
+.modal-title{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;margin-bottom:18px;}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--surface2);border:none;color:var(--text);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+
+/* ── BILL ── */
+.bill-preview{background:#fff;color:#111;border-radius:8px;padding:18px;font-size:12px;font-family:'DM Mono',monospace;max-height:320px;overflow-y:auto;}
+.bill-header{text-align:center;margin-bottom:12px;padding-bottom:10px;border-bottom:2px dashed #ddd;}
+.bill-company{font-size:15px;font-weight:bold;font-family:'Syne',sans-serif;color:#2ab8aa;}
+.bill-table{width:100%;border-collapse:collapse;margin-top:8px;}
+.bill-table th,.bill-table td{padding:5px 7px;border:1px solid #ddd;font-size:10px;}
+.bill-table th{background:#f0f4ff;font-weight:700;}
+
+/* ── WA ── */
+.wa-feed{display:flex;flex-direction:column;gap:9px;max-height:320px;overflow-y:auto;padding:2px;}
+.wa-msg{background:var(--surface2);border-radius:12px;padding:11px 13px;border-left:3px solid transparent;transition:all 0.2s;position:relative;}
+.wa-msg:hover{background:var(--surface3);}
+.wa-msg.ravi{border-color:var(--ravi);}
+.wa-msg.sonu{border-color:var(--sonu);}
+.wa-msg.pankaj{border-color:var(--pankaj);}
+.wa-meta{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.wa-sender{font-weight:700;font-size:12px;}
+.wa-time{font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;margin-left:auto;}
+.wa-text{font-size:12px;color:var(--text2);}
+.wa-amount{font-family:'DM Mono',monospace;font-weight:600;font-size:13px;margin-top:3px;}
+.wa-new{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--accent3);border-radius:50%;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:99px;}
+
+/* ── PULSE / ANIM ── */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:slideIn 0.4s ease forwards;}
+@keyframes loginFade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SPLASH OPEN ANIMATION ── */
+@keyframes splashExit{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.05)}}
+@keyframes logoIn{0%{transform:scale(0) rotate(-20deg);opacity:0}65%{transform:scale(1.15) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes ripple{0%{transform:scale(0.8);opacity:0.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes splashTitle{0%{opacity:0;letter-spacing:12px}100%{opacity:1;letter-spacing:2px}}
+@keyframes splashSub{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes progressFill{0%{width:0%}100%{width:100%}}
+@keyframes float1{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(-18px) translateX(8px)}}
+@keyframes float2{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(12px) translateX(-10px)}}
+@keyframes float3{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(-10px) translateX(-12px)}}
+@keyframes appReveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+#splashScreen{
+  position:fixed;inset:0;background:#ffffff;z-index:10000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  overflow:hidden;
+}
+#splashScreen.hiding{animation:splashExit 0.5s cubic-bezier(.4,0,.2,1) forwards;}
+
+.splash-particle{position:absolute;border-radius:50%;pointer-events:none;}
+.sp1{width:220px;height:220px;background:radial-gradient(circle,rgba(61,207,194,0.15) 0%,transparent 70%);top:-40px;left:-60px;animation:float1 5s ease-in-out infinite;}
+.sp2{width:180px;height:180px;background:radial-gradient(circle,rgba(42,184,170,0.12) 0%,transparent 70%);bottom:-30px;right:-40px;animation:float2 6s ease-in-out infinite;}
+.sp3{width:120px;height:120px;background:radial-gradient(circle,rgba(61,207,194,0.1) 0%,transparent 70%);top:60px;right:80px;animation:float3 4.5s ease-in-out infinite;}
+
+.splash-logo-outer{position:relative;display:flex;align-items:center;justify-content:center;width:120px;height:120px;}
+.splash-ripple{position:absolute;inset:0;border-radius:28px;border:2px solid rgba(61,207,194,0.45);animation:ripple 1.8s ease-out infinite;}
+.splash-ripple2{animation-delay:0.6s;}
+.splash-ripple3{animation-delay:1.2s;}
+.splash-logo-icon{
+  width:80px;height:80px;border-radius:22px;
+  background:linear-gradient(135deg,#3dcfc2,#2ab8aa);
+  display:flex;align-items:center;justify-content:center;font-size:38px;
+  box-shadow:0 12px 48px rgba(61,207,194,0.4),0 4px 16px rgba(42,184,170,0.25);
+  animation:logoIn 0.8s cubic-bezier(.34,1.56,.64,1) both;
+  position:relative;z-index:1;
+}
+.splash-title{
+  font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:#2d3748;
+  animation:splashTitle 0.7s 0.5s cubic-bezier(.2,0,.3,1) both;
+}
+.splash-sub{
+  font-size:11px;color:#3dcfc2;font-family:'DM Mono',monospace;letter-spacing:3px;text-transform:uppercase;
+  animation:splashSub 0.5s 0.75s ease both;
+}
+.splash-progress-wrap{
+  width:200px;height:3px;background:rgba(61,207,194,0.15);border-radius:99px;overflow:hidden;
+  margin-top:8px;animation:splashSub 0.4s 0.85s ease both;opacity:0;
+}
+.splash-progress-fill{height:100%;background:linear-gradient(90deg,#3dcfc2,#2ab8aa,#3dcfc2);background-size:200% 100%;border-radius:99px;animation:progressFill 1.2s 0.9s cubic-bezier(.4,0,.2,1) both;}
+.splash-tagline{font-size:12px;color:#718096;font-family:'DM Sans',sans-serif;animation:splashSub 0.4s 0.9s ease both;opacity:0;}
+
+.app{animation:appReveal 0.55s 0.1s ease both;}
+
+/* ── LOGIN ── */
+#loginScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
+#loginScreen::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 30% 20%,rgba(61,207,194,0.1) 0%,transparent 60%),
+               radial-gradient(ellipse 50% 50% at 75% 75%,rgba(42,184,170,0.08) 0%,transparent 60%);}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:38px 42px;width:420px;position:relative;z-index:1;box-shadow:0 0 80px rgba(61,207,194,0.12),0 30px 80px rgba(0,0,0,0.06);animation:loginFade 0.5s ease;}
+.login-logo{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.login-logo-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 30px rgba(61,207,194,0.35);}
+.login-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;}
+.login-sub{font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;letter-spacing:1px;margin-top:2px;}
+.login-role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+.role-card{border:2px solid var(--border);border-radius:12px;padding:13px 14px;cursor:pointer;transition:all 0.2s;text-align:center;background:var(--surface2);}
+.role-card:hover{border-color:var(--accent2);}
+.role-card.selected{border-color:var(--accent);background:rgba(61,207,194,0.08);}
+.role-card-icon{font-size:20px;margin-bottom:5px;}
+.role-card-name{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;}
+.role-card-desc{font-size:10px;color:var(--text2);margin-top:2px;}
+.login-error{background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);color:var(--accent3);border-radius:8px;padding:9px 13px;font-size:12px;margin-bottom:14px;display:none;}
+
+/* ── ACCESS DENIED ── */
+.access-denied{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);z-index:8000;display:none;align-items:center;justify-content:center;}
+.access-denied.show{display:flex;}
+.access-denied-card{background:var(--surface);border:1px solid rgba(255,107,107,0.4);border-radius:18px;padding:34px 38px;text-align:center;max-width:320px;box-shadow:0 0 60px rgba(255,107,107,0.15);animation:loginFade 0.3s ease;}
+
+/* ── DELETE BTN ── */
+.btn-delete{background:rgba(255,107,107,0.1);color:var(--accent3);border:1px solid rgba(255,107,107,0.25);padding:5px 7px;border-radius:6px;font-size:13px;cursor:pointer;font-weight:600;transition:all 0.2s;font-family:'DM Sans',sans-serif;line-height:1;display:inline-flex;align-items:center;justify-content:center;}
+.btn-delete::before{content:'';display:inline-block;width:14px;height:14px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'/%3E%3Cpath d='M10 11v6'/%3E%3Cpath d='M14 11v6'/%3E%3Cpath d='M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'/%3E%3C/svg%3E") no-repeat center/contain;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'/%3E%3Cpath d='M10 11v6'/%3E%3Cpath d='M14 11v6'/%3E%3Cpath d='M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'/%3E%3C/svg%3E") no-repeat center/contain;}
+.btn-delete:hover{background:rgba(255,107,107,0.25);transform:scale(1.1);}
+/* ── COLOR SWATCHES ── */
+.color-swatch{width:26px;height:26px;border-radius:7px;cursor:pointer;border:3px solid transparent;transition:all 0.2s;flex-shrink:0;}
+.color-swatch.selected{border-color:var(--text);transform:scale(1.15);box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.color-swatch:hover{transform:scale(1.1);}
+
+/* ── MONTH SHEET ── */
+.month-sheet-btn{
+  display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(61,207,194,0.12),rgba(42,184,170,0.08));
+  border:1px solid rgba(61,207,194,0.28);color:var(--accent);font-family:'Syne',sans-serif;
+  font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;margin-top:8px;
+}
+.month-sheet-btn:hover{background:linear-gradient(135deg,rgba(61,207,194,0.22),rgba(42,184,170,0.16));transform:translateY(-1px);box-shadow:0 4px 20px rgba(61,207,194,0.2);}
+.month-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.month-card:hover{border-color:rgba(61,207,194,0.35);background:var(--surface2);}
+.month-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),var(--accent2));}
+.month-card-label{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;margin-bottom:6px;padding-left:10px;}
+.month-card-stats{display:flex;gap:12px;flex-wrap:wrap;padding-left:10px;}
+.month-stat{font-size:11px;font-family:'DM Mono',monospace;}
+.month-stat-val{font-weight:700;margin-bottom:1px;}
+.month-stat-lbl{color:var(--text2);}
+.month-empty{text-align:center;padding:40px 20px;color:var(--text2);font-size:13px;}
+.new-month-confirm{background:rgba(61,207,194,0.06);border:1px solid rgba(61,207,194,0.22);border-radius:12px;padding:18px;margin-bottom:18px;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:26px;right:26px;background:var(--surface);border:1px solid var(--accent);border-radius:12px;padding:13px 18px;font-size:13px;z-index:9999;transform:translateX(200%);transition:transform 0.4s;box-shadow:0 8px 40px rgba(61,207,194,0.18);max-width:260px;}
+#toast.show{transform:translateX(0);}
+.toast-title{font-weight:700;color:var(--accent);margin-bottom:2px;font-family:'Syne',sans-serif;}
+
+/* ══ TRACKING STYLES ══ */
+.track-timeline{display:flex;align-items:center;gap:0;margin:8px 0;overflow:hidden;width:100%;}
+.track-step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+.track-step:not(:last-child)::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:2px;background:var(--surface3);z-index:0;}
+.track-step.done:not(:last-child)::after{background:var(--accent);}
+.track-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--surface3);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:12px;z-index:1;position:relative;transition:all 0.3s;}
+.track-step.done .track-dot{border-color:var(--accent);background:rgba(61,207,194,0.15);color:var(--accent);}
+.track-step.active .track-dot{border-color:var(--accent4);background:rgba(255,209,102,0.15);color:var(--accent4);animation:pulse 1.5s infinite;}
+.track-label{font-size:9px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:5px;text-align:center;letter-spacing:0.5px;}
+.track-step.done .track-label,.track-step.active .track-label{color:var(--text);}
+
+.track-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;transition:all 0.2s;}
+.track-card:hover{border-color:rgba(61,207,194,0.3);background:var(--surface2);}
+.track-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.track-id{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2);font-weight:600;}
+.track-status-badge{padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;font-family:'DM Mono',monospace;}
+.ts-pending{background:rgba(255,209,102,0.12);color:var(--accent4);}
+.ts-purchased{background:rgba(61,207,194,0.12);color:var(--accent2);}
+.ts-outfordelivery{background:rgba(61,207,194,0.1);color:var(--accent);}
+.ts-delivered{background:rgba(42,184,170,0.15);color:#2ab8aa;}
+.ts-collected{background:rgba(123,108,246,0.15);color:var(--accent5);}
+.ts-delivered{background:rgba(61,207,194,0.18);color:var(--accent);}
+.ts-collected{background:rgba(61,207,194,0.08);color:var(--accent);}
+
+/* ══ CREDIT STYLES ══ */
+.credit-limit-bar{background:var(--surface2);border-radius:99px;height:6px;overflow:hidden;margin-top:4px;}
+.credit-limit-fill{height:100%;border-radius:99px;transition:width 0.6s ease;}
+.credit-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;overflow:hidden;}
+.credit-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent5),var(--accent2));}
+.credit-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;font-family:'DM Mono',monospace;background:rgba(181,123,238,0.15);color:var(--accent5);}
+.overdue-badge{background:rgba(255,107,107,0.15);color:var(--accent3);}
+.credit-hist-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:var(--surface2);margin-bottom:6px;font-size:12px;}
+.credit-hist-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* ══ AGENT DASHBOARD ══ */
+.agent-dash-greeting{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:4px;}
+.agent-dash-sub{font-size:13px;color:var(--text2);margin-bottom:22px;}
+.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
+.quick-btn{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.quick-btn:hover{background:var(--surface2);border-color:var(--accent);transform:translateY(-2px);}
+.quick-btn-icon{font-size:26px;margin-bottom:8px;}
+.quick-btn-label{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;}
+.quick-btn-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+.delivery-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:var(--surface2);margin-bottom:8px;transition:all 0.2s;}
+.delivery-item:hover{background:var(--surface3);}
+.delivery-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+
+/* ══ CREDIT INPUT HIGHLIGHT ══ */
+.credit-input-section{background:rgba(181,123,238,0.06);border:1px solid rgba(181,123,238,0.2);border-radius:10px;padding:14px;margin-top:8px;}
+.credit-input-label{font-size:10px;color:var(--accent5);font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-weight:600;}
+
+/* ══ INNER LOG TABS ══ */
+.log-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;}
+.log-tab-btn{padding:10px 22px;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;border:none;background:none;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s;}
+.log-tab-btn:hover{color:var(--text);}
+.log-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ══ QUICK ORDER MODAL ══ */
+.breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.breakdown-total{background:var(--surface2);border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:10px;border:1px solid var(--border);}
+.breakdown-total-label{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;text-transform:uppercase;}
+.breakdown-total-val{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--accent);}
+.balance-warn{color:var(--accent3);font-size:11px;font-family:'DM Mono',monospace;margin-top:6px;display:none;}
+</style>
+</head>
+<body>
+
+<div id="splashScreen">
+  <div class="splash-particle sp1"></div>
+  <div class="splash-particle sp2"></div>
+  <div class="splash-particle sp3"></div>
+  <div class="splash-logo-outer">
+    <div class="splash-ripple"></div>
+    <div class="splash-ripple splash-ripple2"></div>
+    <div class="splash-ripple splash-ripple3"></div>
+    <div class="splash-logo-icon" style="background:transparent;box-shadow:none;overflow:visible;width:120px;height:120px;border-radius:0">
+      <img src="logo.png" alt="zipX.App" style="width:120px;height:120px;object-fit:contain">
+    </div>
+  </div>
+  <div class="splash-title">zip<span style="color:#e8720c">X</span>.App</div>
+  <div class="splash-sub">Distribution Hub</div>
+  <div class="splash-tagline">Medical · Distribution · Simplified</div>
+  <div class="splash-progress-wrap">
+    <div class="splash-progress-fill"></div>
+  </div>
+</div>
+
+<div id="loginScreen">
+  <div class="login-card" id="loginPanel">
+    <div class="login-logo">
+      <div class="login-logo-icon" style="background:transparent;padding:0;overflow:visible;width:56px;height:56px;border-radius:0;box-shadow:none">
+        <img src="logo.png" alt="zipX.App" style="width:56px;height:56px;object-fit:contain;display:block">
+      </div>
+      <div><div class="login-title">zip<span style="color:#e8720c">X</span>.App</div><div class="login-sub">DISTRIBUTION HUB · SECURE LOGIN</div></div>
+    </div>
+    <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:5px;">Select your role</div>
+    <div class="login-role-grid">
+      <div class="role-card selected" id="roleAdmin" onclick="selectRole('admin')">
+        <div class="role-card-icon">🛡️</div><div class="role-card-name">Admin</div>
+      </div>
+      <div class="role-card" id="roleAgent" onclick="selectRole('agent')">
+        <div class="role-card-icon">👤</div><div class="role-card-name">Agent</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label>Username</label>
+      <input class="form-control" id="loginUsername" placeholder="Enter username" onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Password</label>
+      <input class="form-control" type="password" id="loginPassword" placeholder="Enter password" onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <div class="login-error" id="loginError"></div>
+    <button class="btn btn-primary" style="width:100%;padding:11px;font-size:14px" onclick="doLogin()">🔐 Login</button>
+    <div id="agentRegisterLink" style="display:none;margin-top:14px;text-align:center">
+      <span style="font-size:12px;color:var(--text2)">New agent? </span>
+      <span style="font-size:12px;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline" onclick="showRegisterPanel()">Request Account Access →</span>
+    </div>
+  </div>
+
+  <div class="login-card" id="registerPanel" style="display:none;width:460px">
+    <div class="login-logo">
+      <div class="login-logo-icon" style="background:linear-gradient(135deg,var(--accent5),#9c6ef8)">👤</div>
+      <div><div class="login-title">Request Account</div></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Full Name</label><input class="form-control" id="regName" style="text-transform:uppercase"></div>
+      <div class="form-group"><label>Phone</label><input class="form-control" id="regPhone"></div>
+      <div class="form-group"><label>Username</label><input class="form-control" id="regUsername"></div>
+      <div class="form-group"><label>Password</label><input class="form-control" type="password" id="regPassword"></div>
+    </div>
+    <div id="regError" style="display:none"></div>
+    <div id="regSuccess" style="display:none"></div>
+    <div style="display:flex;gap:8px;margin-top:15px">
+      <button class="btn btn-primary" style="flex:1" onclick="submitRegistration()">📨 Send Request</button>
+      <button class="btn btn-ghost" onclick="showLoginPanel()">← Back</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon" style="background:transparent;padding:0;overflow:visible;">
+      <img src="logo.png" alt="zipX.App" style="width:44px;height:44px;object-fit:contain;display:block">
+    </div>
+    <div><div class="logo-text">zip<span style="color:#e8720c">X</span>.App</div><div class="logo-sub">DISTRIBUTION HUB</div></div>
+  </div>
+  <nav class="nav" id="sidebarNav"></nav>
+  <div class="sidebar-footer">
+    <div class="nav-label">TODAY'S BALANCE</div>
+    <div class="agent-pills" id="agentPillsContainer"></div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Admin Dashboard</div>
+    <div class="topbar-date"><span class="live-dot"></span>&nbsp;<span id="liveDate"></span></div>
+    <button class="btn btn-primary" onclick="openNewStockistOrderForm()" style="font-size:12px">+ New Order</button>
+    <button class="btn btn-purple" id="topbarCreditBtn" onclick="openCreditEntry()" style="font-size:12px">💜 Credit Entry</button>
+    <div class="topbar-bell" onclick="switchTab('tracking', document.querySelector('[data-tab=tracking]'))" title="In Transit" style="position:relative;cursor:pointer;padding:6px 10px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);font-size:16px;">🔔<span id="bellBadge" style="position:absolute;top:-8px;right:-8px;min-width:20px;height:20px;background:var(--accent3);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;line-height:20px;text-align:center;padding:0 4px;box-sizing:border-box;font-family:'DM Sans',sans-serif;">0</span></div>
+    <div class="user-badge" onclick="doLogout()">
+      <div class="user-role-dot" id="userRoleDot"></div>
+      <span id="userBadgeLabel">User</span>
+      <span style="color:var(--text2);font-size:10px;margin-left:2px" id="userRoleSpan">· Admin · Logout</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="tab-pane active" id="tab-dashboard">
+      <!-- Pending Agent Requests (shown only when there are pending approvals) -->
+      <div id="pendingAgentsPanel" style="display:none;margin-bottom:18px"></div>
+
+      <!-- Stockist Log Summary -->
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-header"><div class="panel-title">🏭 Stockist Log</div></div>
+        <div class="panel-body" style="padding:14px 18px">
+          <div class="stats-grid" style="margin-bottom:0;grid-template-columns:repeat(6,1fr)" id="dsSLGrid">
+            <div class="stat-card c1" id="dsNetTotal"><div class="stat-label">NET TOTAL</div><div class="stat-value" id="dsNetTotalVal" style="font-size:20px;color:var(--accent)">₹0</div><div class="stat-sub">after cashback</div><div class="stat-icon">💰</div></div>
+            <div class="stat-card c1"><div class="stat-label">PURCHASE</div><div class="stat-value" style="font-size:20px" id="dsPurchase">₹0</div><div class="stat-sub" id="dsPurchaseSub">0 orders</div><div class="stat-icon">🛒</div></div>            <div class="stat-card c2"><div class="stat-label">CASH</div><div class="stat-value" style="font-size:20px" id="dsCash">₹0</div><div class="stat-sub">By all agents</div><div class="stat-icon">💵</div></div>
+            <div class="stat-card c2"><div class="stat-label">ONLINE</div><div class="stat-value" style="font-size:20px" id="dsOnline">₹0</div><div class="stat-sub">UPI / bank transfer</div><div class="stat-icon">📲</div></div>
+            <div class="stat-card c5"><div class="stat-label">CREDIT</div><div class="stat-value" style="font-size:20px" id="dsTotalCredit">₹0</div><div class="stat-sub" id="dsCreditSub">0 accounts</div><div class="stat-icon">💜</div></div>
+            <div class="stat-card c3"><div class="stat-label">DUES</div><div class="stat-value" style="font-size:20px" id="dsDues">₹0</div><div class="stat-sub" id="dsDuesSub">0 pending</div><div class="stat-icon">⚠️</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- Chemist Log Summary -->
+      <div class="panel" style="margin-bottom:18px">
+        <div class="panel-header"><div class="panel-title">🏥 Chemist Log</div></div>
+        <div class="panel-body" style="padding:14px 18px">
+          <div class="stats-grid" style="margin-bottom:0;grid-template-columns:repeat(6,1fr)">
+            <div class="stat-card c1"><div class="stat-label">TOTAL BILL</div><div class="stat-value" style="font-size:20px" id="clDsTotalOrders">₹0</div><div class="stat-sub" id="clDsTotalOrdersSub">0 logs</div><div class="stat-icon">🧾</div></div>
+            <div class="stat-card c1"><div class="stat-label">PURCHASE</div><div class="stat-value" style="font-size:20px" id="clDsPurchase">₹0</div><div class="stat-sub">from stockist</div><div class="stat-icon">🏥</div></div>
+            <div class="stat-card c2"><div class="stat-label">CASH</div><div class="stat-value" style="font-size:20px" id="clDsCash">₹0</div><div class="stat-sub">Cash received</div><div class="stat-icon">💵</div></div>
+            <div class="stat-card c2"><div class="stat-label">ONLINE</div><div class="stat-value" style="font-size:20px" id="clDsOnline">₹0</div><div class="stat-sub">UPI / bank transfer</div><div class="stat-icon">📲</div></div>
+            <div class="stat-card c5"><div class="stat-label">CREDIT</div><div class="stat-value" style="font-size:20px" id="clDsCredit">₹0</div><div class="stat-sub" id="clDsCreditSub">0 pending</div><div class="stat-icon">💜</div></div>
+            <div class="stat-card c3"><div class="stat-label">OUTSTANDING</div><div class="stat-value" style="font-size:20px" id="clDsOutstanding">₹0</div><div class="stat-sub">unpaid</div><div class="stat-icon">⚠️</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:18px">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">📈 Agent Performance — Last 7 Days</div></div>
+          <div class="panel-body"><div class="chart-bars" id="agentPerfChart"></div><div class="chart-legend" id="agentPerfLegend"></div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">🔥 Payment Split</div></div>
+          <div class="panel-body">
+            <div class="donut-wrap">
+              <svg class="donut" width="110" height="110" viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="40" fill="none" stroke="var(--surface3)" stroke-width="18"/>
+                <circle id="donutCash"   cx="55" cy="55" r="40" fill="none" stroke="#3dcfc2" stroke-width="18" stroke-dasharray="0 251.2" stroke-linecap="round"/>
+                <circle id="donutOnline" cx="55" cy="55" r="40" fill="none" stroke="#2ab8aa" stroke-width="18" stroke-dasharray="0 251.2" stroke-linecap="round"/>
+                <circle id="donutCredit" cx="55" cy="55" r="40" fill="none" stroke="#7b6cf6" stroke-width="18" stroke-dasharray="0 251.2" stroke-linecap="round"/>
+                <circle id="donutDues"   cx="55" cy="55" r="40" fill="none" stroke="#ff6b6b" stroke-width="18" stroke-dasharray="0 251.2" stroke-linecap="round"/>
+              </svg>
+              <div class="donut-legend">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="donut-color" style="background:#3dcfc2"></div><div><div style="font-size:12px;font-weight:600">Cash</div><div class="stat-sub" id="donutLblCash">—%</div></div></div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="donut-color" style="background:#2ab8aa"></div><div><div style="font-size:12px;font-weight:600">Online</div><div class="stat-sub" id="donutLblOnline">—%</div></div></div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="donut-color" style="background:#7b6cf6"></div><div><div style="font-size:12px;font-weight:600">Credit</div><div class="stat-sub" id="donutLblCredit">—%</div></div></div>
+                <div style="display:flex;align-items:center;gap:8px"><div class="donut-color" style="background:#ff6b6b"></div><div><div style="font-size:12px;font-weight:600">Dues</div><div class="stat-sub" id="donutLblDues">—%</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-bottom:18px">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">🚚 In Transit</div><button class="btn btn-ghost" style="font-size:11px" onclick="switchTab('tracking',document.querySelector('[data-tab=tracking]'))">View All →</button></div>
+          <div class="panel-body" id="inTransitPanel"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">💜 Pending Credits</div><button class="btn btn-ghost" style="font-size:11px" onclick="switchTab('credits',document.querySelector('[data-tab=credits]'))">View All →</button></div>
+          <div class="panel-body" id="pendingCreditsPanel"></div>
+        </div>
+        <div class="panel"><div class="panel-header"><div class="panel-title">🏆 Agent Scorecard</div><button class="btn btn-ghost" style="font-size:11px" onclick="switchTab('settlements',document.querySelector('[data-tab=settlements]'))">View All →</button></div><div class="panel-body" id="agentScorecardPanel"></div></div>
+      </div>
+      <div class="panel" style="margin-bottom:18px">
+        <div class="panel-header"><div class="panel-title">📋 Pending Order Requests</div><button class="btn btn-ghost" style="font-size:11px" onclick="switchTab('orderrequests',document.querySelector('[data-tab=orderrequests]'))">View All →</button></div>
+        <div class="panel-body" id="adminPendingRequestsPanel"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🏭 Recent Stockist Orders</div>
+          <button class="btn btn-ghost" style="font-size:11px" onclick="switchTab('stockistlog',document.querySelector('[data-tab=stockistlog]'))">View All →</button>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>ORDER ID</th><th>DATE</th><th>CHEMIST</th><th>STOCKIST</th><th>TOTAL</th><th>CASH</th><th>ONLINE</th><th>CREDIT</th><th>STATUS</th><th>AGENT</th></tr></thead>
+          <tbody id="orderTableBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-tracking">
+      <div id="trackingFilters" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px"></div>
+      <div id="trackingList"></div>
+    </div>
+  </div>
+</main>
+</div>
+
+<div class="modal-overlay" id="creditModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('creditModal')">✕</button>
+    <div class="modal-title">💜 Credit Entry</div>
+    <div class="form-grid">
+      <div class="form-group"><label>Chemist</label><select class="form-control" id="creditChemist"></select></div>
+      <div class="form-group"><label>Amount (₹)</label><input class="form-control" type="number" id="creditAmount"></div>
+      <div class="form-group"><label>Due Date</label><input class="form-control" type="date" id="creditDueDate"></div>
+      <div class="form-group"><label>Linked Order ID (optional)</label><input class="form-control" id="creditOrderId" placeholder="Leave blank if none"></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:15px" onclick="saveCreditEntry()">💜 Save Credit</button>
+  </div>
+</div>
+
+<div id="printBillArea" style="display:none"></div>
+
+<!-- Order Request Modal (Admin → Agent) -->
+<div class="modal-overlay" id="orderRequestModal">
+  <div class="modal" style="width:500px">
+    <button class="modal-close" onclick="closeModal('orderRequestModal')">✕</button>
+    <div class="modal-title">📋 Send Order Request to Agent</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Agent</label>
+        <select class="form-control" id="orAgent"></select>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input class="form-control" type="date" id="orDate">
+      </div>
+      <div class="form-group form-full">
+        <label>Chemist</label>
+        <select class="form-control" id="orChemist"></select>
+      </div>
+      <div class="form-group form-full">
+        <label>Stockists (select multiple)</label>
+        <div id="orStockistsCheckboxes" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface)"></div>
+      </div>
+      <div class="form-group form-full">
+        <label>Notes (optional)</label>
+        <input class="form-control" id="orNotes" placeholder="Any instructions...">
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="sendOrderRequest()">📤 Send Request</button>
+  </div>
+</div>
+
+<!-- Agent Accept Order Request Modal -->
+<div class="modal-overlay" id="acceptOrderRequestModal">
+  <div class="modal" style="width:580px;max-height:80vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeModal('acceptOrderRequestModal')">✕</button>
+    <div class="modal-title">✅ Accept Order Request</div>
+    <div id="acceptOrderRequestInfo" style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px"></div>
+    <div id="acceptOrderStockistForms"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn btn-primary" style="flex:1" onclick="submitAcceptedOrder()">✅ Add Orders</button>
+      <button class="btn btn-ghost" onclick="rejectOrderRequest()">❌ Reject</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Agent Modal -->
+<div class="modal-overlay" id="addAgentModal">
+  <div class="modal" style="width:420px">
+    <button class="modal-close" onclick="closeModal('addAgentModal')">✕</button>
+    <div class="modal-title">👤 Add New Agent</div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label>Full Name</label><input class="form-control" id="newAgentName" placeholder="Agent name"></div>
+      <div class="form-group"><label>Username</label><input class="form-control" id="newAgentUsername" placeholder="username"></div>
+      <div class="form-group"><label>Phone</label><input class="form-control" id="newAgentPhone" placeholder="9XXXXXXXXX"></div>
+      <div class="form-group form-full"><label>Password</label><input class="form-control" type="password" id="newAgentPassword" placeholder="Password"></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="addAgentByAdmin()">✅ Add Agent</button>
+  </div>
+</div>
+
+<!-- Add Chemist Modal -->
+<div class="modal-overlay" id="addChemistModal">
+  <div class="modal" style="width:380px">
+    <button class="modal-close" onclick="closeModal('addChemistModal')">✕</button>
+    <div class="modal-title">🏥 Add New Chemist</div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Chemist Name</label>
+      <input class="form-control" id="newChemistName" placeholder="Enter chemist name" style="text-transform:uppercase" onkeydown="if(event.key==='Enter') addChemist()">
+    </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Phone Number</label>
+      <input class="form-control" id="newChemistPhone" placeholder="Enter phone number" type="tel" onkeydown="if(event.key==='Enter') addChemist()">
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="addChemist()">✅ Add Chemist</button>
+  </div>
+</div>
+
+<!-- Add Stockist Modal -->
+<div class="modal-overlay" id="addStockistModal">
+  <div class="modal" style="width:380px">
+    <button class="modal-close" onclick="closeModal('addStockistModal')">✕</button>
+    <div class="modal-title">🏭 Add New Stockist</div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Stockist Name</label>
+      <input class="form-control" id="newStockistName" placeholder="Enter stockist name" style="text-transform:uppercase" onkeydown="if(event.key==='Enter') addStockist()">
+    </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Phone Number</label>
+      <input class="form-control" id="newStockistPhone" placeholder="Enter phone number" type="tel" onkeydown="if(event.key==='Enter') addStockist()">
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="addStockist()">✅ Add Stockist</button>
+  </div>
+</div>
+
+<!-- Monthly Sheet Edit Modal (admin only) -->
+<div class="modal-overlay" id="monthSheetEditModal">
+  <div class="modal" style="width:460px">
+    <button class="modal-close" onclick="closeModal('monthSheetEditModal')">✕</button>
+    <div class="modal-title">✏️ Edit Monthly Sheet</div>
+    <input type="hidden" id="msEditIndex">
+    <div class="form-grid" style="margin-bottom:14px">
+      <div class="form-group"><label>Month Label</label><input class="form-control" id="msEditLabel"></div>
+      <div class="form-group"><label>Closing Date</label><input class="form-control" type="date" id="msEditDate"></div>
+      <div class="form-group form-full"><label>Notes / Remarks</label><textarea class="form-control" id="msEditNotes" rows="2"></textarea></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveEditMonthSheet()">✅ Save Changes</button>
+      <button class="btn btn-ghost" onclick="closeModal('monthSheetEditModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Monthly Sheet View Modal -->
+<div class="modal-overlay" id="monthSheetViewModal">
+  <div class="modal" style="width:720px">
+    <button class="modal-close" onclick="closeModal('monthSheetViewModal')">✕</button>
+    <div class="modal-title" id="msViewTitle">Monthly Sheet</div>
+    <div id="msViewBody"></div>
+  </div>
+</div>
+
+<!-- New Stockist Order Modal -->
+<div class="modal-overlay" id="newStockistOrderModal">
+  <div class="modal" style="width:780px;max-height:90vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeModal('newStockistOrderModal')">✕</button>
+    <div class="modal-title">🏭 New Stockist Order</div>
+
+    <!-- Basic Info Grid -->
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Date *</label>
+        <input class="form-control" type="date" id="soDate">
+      </div>
+      <div class="form-group" id="soAgentGroup">
+        <label>Agent *</label>
+        <select class="form-control" id="soAgent"></select>
+      </div>
+      <div class="form-group">
+        <label>Stockist *</label>
+        <select class="form-control" id="soStockist"></select>
+      </div>
+      <div class="form-group">
+        <label>Chemist *</label>
+        <select class="form-control" id="soChemist"></select>
+      </div>
+    </div>
+
+    <!-- Payment Section -->
+    <div style="background:var(--surface2);border-radius:12px;padding:16px;margin:16px 0">
+      <div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:12px">Payment Breakdown</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Purchase Amount (₹)</label>
+          <input class="form-control" type="number" id="soPurchaseAmount" placeholder="0" oninput="soUpdatePayment()">
+        </div>
+        <div class="form-group">
+          <label>Total Amount (₹)</label>
+          <input class="form-control" type="number" id="soTotalAmount" placeholder="0" readonly style="background:var(--surface3)">
+        </div>
+        <div class="form-group">
+          <label>Cash (₹)</label>
+          <input class="form-control" type="number" id="soCash" placeholder="0" oninput="soUpdatePayment()">
+        </div>
+        <div class="form-group">
+          <label>Online (₹)</label>
+          <input class="form-control" type="number" id="soOnline" placeholder="0" oninput="soUpdatePayment()">
+        </div>
+        <div class="form-group">
+          <label>Credit (₹)</label>
+          <input class="form-control" type="number" id="soCredit" placeholder="0" oninput="soUpdatePayment()">
+        </div>
+        <div class="form-group">
+          <label>Dues (₹)</label>
+          <input class="form-control" type="number" id="soDues" placeholder="0" oninput="soUpdatePayment()">
+        </div>
+        <div class="form-group">
+          <label style="color:var(--accent)">💰 Cashback (₹)</label>
+          <input class="form-control" type="number" id="soCashback" placeholder="0" style="border-color:rgba(61,207,194,0.4)">
+        </div>
+        <div class="form-group">
+          <label>Remaining Balance</label>
+          <div id="soBalance" style="padding:9px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;background:var(--surface);border:1px solid var(--border)">₹0</div>
+        </div>
+      </div>
+      <div id="soPaymentError" style="display:none;color:var(--accent3);font-size:12px;margin-top:8px;padding:8px 12px;background:rgba(255,107,107,0.08);border-radius:8px;border:1px solid rgba(255,107,107,0.2)"></div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn btn-primary" style="flex:1;padding:12px;font-size:14px" onclick="submitNewStockistOrder()">✅ Save Order</button>
+      <button class="btn btn-ghost" style="padding:12px 20px;font-size:14px" onclick="closeModal('newStockistOrderModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"><div class="toast-title" id="toastTitle">Notification</div><div id="toastBody"></div></div>
+
+<!-- ══ QUICK LOG ORDER MODAL ══ -->
+<div class="modal-overlay" id="quickLogOrderModal">
+  <div class="modal" style="width:520px">
+    <button class="modal-close" onclick="closeModal('quickLogOrderModal')">✕</button>
+    <div class="modal-title" id="quickLogOrderTitle">📦 Add Order</div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Date *</label>
+        <input class="form-control" type="date" id="qloDate">
+      </div>
+      <div class="form-group">
+        <label>Agent *</label>
+        <select class="form-control" id="qloAgent"></select>
+      </div>
+      <div class="form-group form-full">
+        <label>Stockist *</label>
+        <select class="form-control" id="qloStockist"></select>
+      </div>
+      <div class="form-group form-full">
+        <label>Chemist *</label>
+        <select class="form-control" id="qloChemist"></select>
+      </div>
+    </div>
+
+    <div style="margin:14px 0 6px;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text2)">Payment Breakdown</div>
+
+    <div class="breakdown-grid">
+      <div class="form-group">
+        <label>Cash (₹)</label>
+        <input class="form-control" type="number" id="qloCash" placeholder="0" oninput="qloCalc()">
+      </div>
+      <div class="form-group">
+        <label>Online (₹)</label>
+        <input class="form-control" type="number" id="qloOnline" placeholder="0" oninput="qloCalc()">
+      </div>
+      <div class="form-group">
+        <label>Credit (₹)</label>
+        <input class="form-control" type="number" id="qloCredit" placeholder="0" oninput="qloCalc()">
+      </div>
+      <div class="form-group">
+        <label>Dues (₹)</label>
+        <input class="form-control" type="number" id="qloDues" placeholder="0" oninput="qloCalc()">
+      </div>
+      <div class="form-group">
+        <label style="color:var(--accent)">💰 Cashback (₹)</label>
+        <input class="form-control" type="number" id="qloCashback" placeholder="0" style="border-color:rgba(61,207,194,0.4)">
+      </div>
+      <div class="form-group">
+        <label>Delivery Charge (₹)</label>
+        <input class="form-control" type="number" id="qloDelivery" placeholder="0">
+      </div>
+    </div>
+
+    <div class="breakdown-total">
+      <span class="breakdown-total-label">Total Amount</span>
+      <span class="breakdown-total-val" id="qloTotal">₹0</span>
+    </div>
+    <div class="balance-warn" id="qloWarn">⚠ All fields are 0 — enter at least one payment amount</div>
+
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn btn-primary" style="flex:1;padding:11px;font-size:14px" onclick="saveQuickLogOrder()">💾 Save Order</button>
+      <button class="btn btn-ghost" style="padding:11px 18px" onclick="closeModal('quickLogOrderModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
