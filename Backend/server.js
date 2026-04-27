@@ -86,7 +86,12 @@ app.post("/api/admin/renumber-orders", async (req, res) => {
 });
 
 // Serve frontend for any non-API route (must be last)
-app.get('*', (req, res) => {
+app.use((req, res, next) => {
+  // Skip if it's an API route
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  // Serve index.html for all other routes
   res.sendFile(path.join(__dirname, '../Frontend/index.html'));
 });
 
