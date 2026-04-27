@@ -2,7 +2,7 @@
 //  zipX.App  FULLY BACKEND INTEGRATED
 //
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://zipx-app.onrender.com/api";
 
 let credits = [];
 let agents = [];

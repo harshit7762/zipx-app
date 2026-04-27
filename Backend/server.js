@@ -12,7 +12,7 @@ const app = express();
 // CORS configuration for production
 app.use(cors({
   origin: [
-    'https://zipx-backend.onrender.com',
+    'https://zipx-app.onrender.com',
     'http://localhost:5000',
     'http://localhost:3000',
     'capacitor://localhost',
